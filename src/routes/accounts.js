@@ -1,49 +1,12 @@
 const express = require('express');
-const { accounts } = require('../data');
-
 const router = express.Router();
 
-function routerFunction(){
-  router.get('/check', (req, res) => {
-    res.render(
-      'account', 
-      {
-        title: 'Savings Account Summary',
-        account: accounts.savings,
-      })
-  })
-  router.route('/savings')
-  .get((req, res) => {
-    res.render(
-      'account', 
-      {
-        title: 'Savings Account Summary',
-        account: accounts.savings,
-      })
-    });
+const { accounts } = require('../data.js');
 
-  router.route('/credit',)
-    .get((req, res) => {
-    res.render(
-      'account', 
-      {
-        title: 'Credit Account Summary',
-        account: accounts.credit,
-      }
-    );
-  });
+router.get(
+  '/savings',
+  (req, res) => res.render('account', { account: accounts.savings }));
+router.get('/checking', (req, res) => res.render('account', { account: accounts.checking }));
+router.get('/credit', (req, res) => res.render('account', { account: accounts.credit }));
 
-  router.route('/checking')
-  .get((req, res) => {
-    res.render(
-      'account', 
-      {
-        title: 'Checking Account Summary',
-        account: accounts.checking,
-      }
-    );
-  }); 
-  return router;
-}
-
-module.exports = routerFunction;
+module.exports = router; 
