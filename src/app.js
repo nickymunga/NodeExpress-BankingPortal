@@ -1,10 +1,14 @@
-const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const accountRoutes = require('./routes/accounts')();
+const servicesRoutes = require('./routes/services')();
+
 
 const app = express();
+app.use('/account', accountRoutes);
+app.use('/services', servicesRoutes);
 
-const { accounts, users, writeJSON} = require('./data');
+const { accounts, users} = require('./data');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -22,72 +26,6 @@ app.get('/',(req, res) => {
     }
   );
 });
-app.get('/transfer', (req, res) => {
-  res.render('transfer', {});
-});
-app.post('/transfer', (req, res) => {
-  const { from, to, amount } = req.body;
-  accounts[from].balance = parseInt(accounts[from].balance) - parseInt(amount);
-  accounts[to].balance = parseInt(accounts[to].balance) + parseInt(amount);
-  writeJSON();
-  res.render(
-    'transfer',
-    {
-      message: 'Transfer Completed'
-    }
-  )
-});
-
-app.get('/payment', (req, res) => {
-  res.render(
-    'payment',
-    {
-      account: accounts.credit
-    }
-  )
-});
-
-app.post('/payment', (req, res) => {
-  accounts.credit.balance = parseInt(accounts.credit.balance) - parseInt(req.body.amount);
-  accounts.credit.available = parseInt(accounts.credit.available) + parseInt(req.body.amount);
-  writeJSON();
-  res.render(
-    'payment',
-    {
-      message: "Payment Successful",
-      account: accounts.credit
-    }
-  )
-})
-
-app.get('/savings',(req, res) => {
-  res.render(
-    'account', 
-    {
-      title: 'Savings Account Summary',
-      account: accounts.savings,
-    }
-  );
-});
-app.get('/credit',(req, res) => {
-  res.render(
-    'account', 
-    {
-      title: 'Credit Account Summary',
-      account: accounts.credit,
-    }
-  );
-});
-app.get('/checking',(req, res) => {
-  res.render(
-    'account', 
-    {
-      title: 'Checking Account Summary',
-      account: accounts.checking,
-    }
-  );
-});
-
 app.get('/profile',(req, res) => {
   res.render(
     'profile', 
